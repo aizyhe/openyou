@@ -49,5 +49,5 @@ dependencies {
     // EncryptedSharedPreferences for the salted pattern hash and lock config
     // and the Keystore-wrapped data key.
     // Use the stable 1.0.0 release (1.1.0-alpha06 was an unstable alpha).
-    implementation("androidx.security:security-crypto:1.0.0")
+    implementation("androidx.security:security-crypto:1.1.0")
 }
