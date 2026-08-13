@@ -841,11 +841,11 @@ func walkEmbedded(fsys fs.FS, dir string, timeClass bool, seen map[string]bool, 
 	}
 }
 
-// maxMatchedSkills caps returned matches at the brain trust's sub-agent count.
+// maxMatchedSkills caps returned matches at the thinktank's sub-agent count.
 const maxMatchedSkills = 5
 
 // Match returns matched skills sorted by strength, capped at maxMatchedSkills —
-// the most relevant skills win brain-trust slots, not whichever files loaded first.
+// the most relevant skills win thinktank slots, not whichever files loaded first.
 func (m *Matcher) Match(userMessage string) []agent.SkillInfo {
 	m.refreshIfChanged()
 	m.mu.RLock()

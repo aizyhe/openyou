@@ -130,7 +130,7 @@ func Run(dataDir string) error {
 	}
 
 	// Every prompt is pseudonymized and every response un-pseudonymized here —
-	// the single choke point for chat, brain trust, and memory.
+	// the single choke point for chat, thinktank, and memory.
 	rawLLM := llm.NewClient(cfgStore)
 	llmClient := llm.NewMaskingClient(rawLLM, pseudo)
 
@@ -163,7 +163,7 @@ func Run(dataDir string) error {
 		MemoryQueue:   memQueue,
 		SkillMatcher:  skillMatcher,
 		Skills:        skillMatcher,
-		BrainTrust:    bt,
+		ThinkTank:     bt,
 		Feedback:      consultStore,
 		Pseudonymizer: pseudo,
 		Tasks:         taskStore,

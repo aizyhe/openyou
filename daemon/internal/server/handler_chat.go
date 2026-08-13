@@ -207,8 +207,8 @@ func handleAnalyze(deps Deps) http.HandlerFunc {
 			writeErr(w, http.StatusBadRequest, "empty message")
 			return
 		}
-		if deps.BrainTrust == nil {
-			writeErr(w, http.StatusServiceUnavailable, "brain trust not configured")
+		if deps.ThinkTank == nil {
+			writeErr(w, http.StatusServiceUnavailable, "thinktank not configured")
 			return
 		}
 		if deps.LLMSem != nil {
@@ -237,9 +237,9 @@ func handleAnalyze(deps Deps) http.HandlerFunc {
 		}
 
 		ctx := r.Context()
-		// Prepend prior turns so the brain trust and synthesis see the running conversation.
+		// Prepend prior turns so the thinktank and synthesis see the running conversation.
 		query := buildContextualQuery(ctx, deps, sessionID, body.Message)
-		events, err := deps.BrainTrust.Analyze(ctx, query, sessionID)
+		events, err := deps.ThinkTank.Analyze(ctx, query, sessionID)
 		if err != nil {
 			if deps.Sessions != nil {
 				_, _ = deps.Sessions.AppendMessage(sessionID, "assistant", "[分析出错]")
@@ -354,7 +354,7 @@ func sendContextLoaded(deps Deps, sse *sseWriter) {
 	sse.send(data)
 }
 
-// buildContextualQuery: a single-string brain-trust query still carries history
+// buildContextualQuery: a single-string thinktank query still carries history
 // continuity; oldest turns are compacted to stay within context limits.
 func buildContextualQuery(ctx context.Context, deps Deps, sessionID, latest string) string {
 	if deps.Sessions == nil || sessionID == "" {

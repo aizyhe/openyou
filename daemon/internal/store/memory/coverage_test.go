@@ -215,7 +215,7 @@ func TestFindConflictsSkipBranches(t *testing.T) {
 	}
 }
 
-// Pins the A4 fix: recall must match long composite queries (brain-trust
+// Pins the A4 fix: recall must match long composite queries (thinktank
 // history+question), not require the whole query as one substring.
 func TestFindSimilarByContentTokenRecall(t *testing.T) {
 	db, err := sql.Open("sqlite3", ":memory:")
@@ -242,7 +242,7 @@ func TestFindSimilarByContentTokenRecall(t *testing.T) {
 		t.Fatalf("FindSimilarByContent: %v", err)
 	}
 	if len(got) == 0 {
-		t.Fatal("token recall matched nothing; brain-trust memory recall is dead")
+		t.Fatal("token recall matched nothing; thinktank memory recall is dead")
 	}
 	if !strings.Contains(got[0].Content, "张伟") {
 		t.Errorf("best match should be the Zhang Wei memory, got %q", got[0].Content)

@@ -1452,8 +1452,8 @@ let state = {
   pressTimer: null,
   longPressTarget: null,
   currentPage: 'consult',
-  brainTrustActive: true,
-  brainTrustSkills: [],
+  thinkTankActive: true,
+  thinkTankSkills: [],
   lastUserMessage: '',
   memFilterType: '',
   _contextPersonName: null,
@@ -2062,7 +2062,7 @@ function sendWS(data) {
     _brProgressTimer = null;
     $('#br-progress').style.display = 'block';
     $('#br-skills-list').innerHTML = '';
-    state.brainTrustSkills = [];
+    state.thinkTankSkills = [];
     state.llmSendTime = performance.now();
     // handleDone runs for both the "done" JSON event and the [DONE] sentinel
     // (analyze may emit more) — the guard makes only the first take effect.
@@ -2110,7 +2110,7 @@ function sendWS(data) {
             setStreaming(false);
             showThinking(false);
             $('#br-progress').style.display = 'none';
-            state.brainTrustSkills = [];
+            state.thinkTankSkills = [];
             const sid = state.streamingSessionId || state.currentSessionId;
             const s = getSession(sid);
             if (s) {
@@ -2215,8 +2215,8 @@ function handleWSMessage(raw) {
         if (state.currentPage === 'context') renderContextPage();
       }
       break;
-    case 'brain-trust-start':
-      handleBrainTrustStart(data);
+    case 'thinktank-start':
+      handleThinkTankStart(data);
       break;
     case 'skill-progress':
       handleSkillProgress(data);
@@ -2238,17 +2238,17 @@ function handleWSMessage(raw) {
   }
 }
 
-function handleBrainTrustStart(data) {
+function handleThinkTankStart(data) {
   showThinking(false);
   const skills = data.skills || [];
-  state.brainTrustSkills = skills.map(s => ({ name: s.name || s, status: 'analyzing' }));
-  renderBrainTrustBadges();
+  state.thinkTankSkills = skills.map(s => ({ name: s.name || s, status: 'analyzing' }));
+  renderThinkTankBadges();
   // Bind the note to the streaming session, not whatever is on screen now.
   const s = getSession(state.streamingSessionId || state.currentSessionId);
   if (s) {
     const last = s.messages[s.messages.length - 1];
     if (last && last.role === 'assistant') {
-      last.content = '**Brain Trust activated** — ' + skills.length + ' skills analyzing:\n' +
+      last.content = '**ThinkTank activated** — ' + skills.length + ' skills analyzing:\n' +
         skills.map(sk => '- ' + (sk.name || sk)).join('\n') + '\n\n';
     }
     saveSessions();
@@ -2258,9 +2258,9 @@ function handleBrainTrustStart(data) {
 function handleSkillProgress(data) {
   const skill = data.skill;
   const status = data.status || 'analyzing';
-  const idx = state.brainTrustSkills.findIndex(s => s.name === skill);
-  if (idx >= 0) state.brainTrustSkills[idx].status = status;
-  renderBrainTrustBadges();
+  const idx = state.thinkTankSkills.findIndex(s => s.name === skill);
+  if (idx >= 0) state.thinkTankSkills[idx].status = status;
+  renderThinkTankBadges();
 }
 
 function handleSkillResult(data) {
@@ -2343,9 +2343,9 @@ function checkPersonMention(text) {
   renderContextPills(found || null);
 }
 
-function renderBrainTrustBadges() {
+function renderThinkTankBadges() {
   const list = $('#br-skills-list');
-  list.innerHTML = state.brainTrustSkills.map(s =>
+  list.innerHTML = state.thinkTankSkills.map(s =>
     '<span class="br-skill-badge ' + escHtml(s.status) + '">' +
       escHtml(s.name) +
     '</span>'
@@ -2457,7 +2457,7 @@ function handleDone(data) {
   // FE-8: cancel any pending hide timer before setting a new one.
   clearTimeout(_brProgressTimer);
   _brProgressTimer = setTimeout(() => { $('#br-progress').style.display = 'none'; _brProgressTimer = null; }, 1000);
-  state.brainTrustSkills = [];
+  state.thinkTankSkills = [];
 
   // Operate on the session the stream started for (the user may have switched).
   const sid = state.streamingSessionId || state.currentSessionId;
@@ -2569,7 +2569,7 @@ function handleError(data) {
   state.currentStreamingText = '';
   showThinking(false);
   $('#br-progress').style.display = 'none';
-  state.brainTrustSkills = [];
+  state.thinkTankSkills = [];
   showToast('Error: ' + (data.error || data.message || 'Unknown error'), 'warn');
   $('#retry-banner').classList.add('show');
 

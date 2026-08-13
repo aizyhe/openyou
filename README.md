@@ -36,7 +36,7 @@ openyou 不是又一个聊天机器人。他是你的**镜子、军师、臂膀*
 
 ## 特性
 
-- **智囊团（Brain Trust）**：多个技能并行分析同一问题，交叉验证、冲突检测、综合输出。
+- **智囊团（ThinkTank）**：多个技能并行分析同一问题，交叉验证、冲突检测、综合输出。
 - **按需检索**：规则全量加载；资料（简历/题库/人物）按 `##` 章节检索注入，30 万字题库一次只带相关几题；技能命中后整篇注入。
 - **记忆系统**：对话后自动提取关键信息，分类型置信度阈值，异步队列后台处理，定期衰减。
 - **增量刷新**：手动增删改走单文件 O(1) 刷新；直接改文件由 mtime 指纹自动感知，无需重启。
@@ -64,7 +64,7 @@ openyou 不是又一个聊天机器人。他是你的**镜子、军师、臂膀*
 ┌────────────▼──────────────────────────────────────────────┘
 ┌─ Go daemon (:8765)────────────────────────────────────────┐
 │  Workers: Star 6h · health 24h · memory decay 24h         │
-│  Brain Trust: ≤5 sub-agents → conflicts → synthesis       │
+│  ThinkTank: ≤5 sub-agents → conflicts → synthesis       │
 │  MaskingClient (pseudonymize) → DeepSeek SSE              │
 │  Storage: SQLite (api_key AES-256-GCM encrypted)          │
 └────────────┬──────────────────────────────────────────────┘
@@ -93,7 +93,7 @@ openyou/
 ├── android/              # Kotlin Android shell (WebView, foreground service, app lock)
 ├── daemon/               # Go daemon → .so via cgo + JNI
 │   └── internal/
-│       ├── ai/           # agent skill types · llm client · thinktank (brain trust)
+│       ├── ai/           # agent skill types · llm client · thinktank (thinktank)
 │       ├── infra/        # db/config/crypto/privacy/notify/bridge/tool
 │       ├── server/       # HTTP routes & handlers (REST/SSE/WS, Web UI included)
 │       ├── service/      # background workers · matcher (retrieval) · importer

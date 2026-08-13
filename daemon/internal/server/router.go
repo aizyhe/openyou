@@ -62,7 +62,7 @@ type Deps struct {
 	MemoryQueue     *memory.Queue
 	SkillMatcher    agent.SkillMatcher
 	Skills          *matcher.Matcher
-	BrainTrust      *thinktank.BrainTrust
+	ThinkTank       *thinktank.ThinkTank
 	Feedback        *consult.Store
 	Pseudonymizer   *privacy.Pseudonymizer
 	Tasks           *task.Store

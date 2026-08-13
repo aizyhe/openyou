@@ -14,18 +14,18 @@ const (
 	subAgentTimeout = 60 * time.Second
 )
 
-type BrainTrust struct {
+type ThinkTank struct {
 	llm    LLMClient
 	skills SkillProvider
 	memory MemoryProvider // optional; recalls relevant memories into context
 	docs   DocProvider    // optional; used to inject a skill's declared deps
 }
 
-func New(llm LLMClient, skills SkillProvider, mem MemoryProvider, docs DocProvider) *BrainTrust {
-	return &BrainTrust{llm: llm, skills: skills, memory: mem, docs: docs}
+func New(llm LLMClient, skills SkillProvider, mem MemoryProvider, docs DocProvider) *ThinkTank {
+	return &ThinkTank{llm: llm, skills: skills, memory: mem, docs: docs}
 }
 
-func (bt *BrainTrust) Analyze(ctx context.Context, query, _ string) (<-chan AnalysisEvent, error) {
+func (bt *ThinkTank) Analyze(ctx context.Context, query, _ string) (<-chan AnalysisEvent, error) {
 	matched := bt.skills.Match(query)
 	ch := make(chan AnalysisEvent, 32)
 
@@ -44,7 +44,7 @@ func (bt *BrainTrust) Analyze(ctx context.Context, query, _ string) (<-chan Anal
 			return
 		}
 
-		// 1 skill: deep analysis without brain trust overhead, emitting only
+		// 1 skill: deep analysis without thinktank overhead, emitting only
 		// synthesis-delta — also emitting skill-result made the client append
 		// the text twice while the server persisted it once.
 		if len(matched) == 1 {
@@ -58,7 +58,7 @@ func (bt *BrainTrust) Analyze(ctx context.Context, query, _ string) (<-chan Anal
 			return
 		}
 
-		// 2+ skills: brain trust mode.
+		// 2+ skills: thinktank mode.
 		skills := matched
 		if len(skills) > maxSubAgents {
 			skills = skills[:maxSubAgents]
@@ -68,7 +68,7 @@ func (bt *BrainTrust) Analyze(ctx context.Context, query, _ string) (<-chan Anal
 		for i, s := range skills {
 			briefs[i] = SkillBrief{Name: s.Name, Description: s.Description}
 		}
-		emit(ctx, ch, AnalysisEvent{Type: EventBrainTrustStart, Skills: briefs})
+		emit(ctx, ch, AnalysisEvent{Type: EventThinkTankStart, Skills: briefs})
 
 		sem := make(chan struct{}, maxSubAgents)
 		results := make(chan subResult, len(skills))
@@ -164,7 +164,7 @@ func (bt *BrainTrust) Analyze(ctx context.Context, query, _ string) (<-chan Anal
 	return ch, nil
 }
 
-func (bt *BrainTrust) runSubAgent(ctx context.Context, sk SkillInfo, query string) (string, error) {
+func (bt *ThinkTank) runSubAgent(ctx context.Context, sk SkillInfo, query string) (string, error) {
 	prompt := bt.buildSkillPrompt(sk, query)
 	return bt.llm.Chat(ctx, prompt, query)
 }
@@ -173,7 +173,7 @@ func (bt *BrainTrust) runSubAgent(ctx context.Context, sk SkillInfo, query strin
 // oversized skill doc can't blow a sub-agent's context window on its own.
 const skillCharBudget = 12000
 
-func (bt *BrainTrust) buildSkillPrompt(sk SkillInfo, query string) string {
+func (bt *ThinkTank) buildSkillPrompt(sk SkillInfo, query string) string {
 	var b strings.Builder
 
 	// Build once so the inside/ branch below can decide whether on-demand retrieval matched.
@@ -243,7 +243,7 @@ func clipRunes(s string, max int) string {
 // blow past the model's context window.
 const depsCharBudget = 12000
 
-func (bt *BrainTrust) buildDepsContext(sk SkillInfo) string {
+func (bt *ThinkTank) buildDepsContext(sk SkillInfo) string {
 	if bt.docs == nil || len(sk.Deps) == 0 {
 		return ""
 	}
@@ -273,7 +273,7 @@ func (bt *BrainTrust) buildDepsContext(sk SkillInfo) string {
 	return strings.TrimSpace(b.String())
 }
 
-func (bt *BrainTrust) readDep(dep string) string {
+func (bt *ThinkTank) readDep(dep string) string {
 	dep = strings.TrimSpace(dep)
 	if !strings.HasSuffix(dep, ".md") && bt.docs != nil {
 		if c, err := bt.docs.ReadDir(dep); err == nil && strings.TrimSpace(c) != "" {
@@ -297,7 +297,7 @@ func (bt *BrainTrust) readDep(dep string) string {
 	return ""
 }
 
-func (bt *BrainTrust) buildSimplePrompt(query string) string {
+func (bt *ThinkTank) buildSimplePrompt(query string) string {
 	var b strings.Builder
 	b.WriteString("You are the user's openyou — a parallel version of them with access to their complete personal context. ")
 	b.WriteString("Analyze the situation based on what you know, not on generic advice.")
@@ -309,7 +309,7 @@ func (bt *BrainTrust) buildSimplePrompt(query string) string {
 }
 
 // buildInsideContext: rules always, plus relevant inside docs and memories on demand.
-func (bt *BrainTrust) buildInsideContext(query string) string {
+func (bt *ThinkTank) buildInsideContext(query string) string {
 	var b strings.Builder
 
 	// Rules load unconditionally — few and dense, every answer must be
@@ -394,7 +394,7 @@ var waitKW = []string{
 	"保守", "低调", "迂回", "蛰伏",
 }
 
-func (bt *BrainTrust) detectConflicts(analyses []subResult) []struct {
+func (bt *ThinkTank) detectConflicts(analyses []subResult) []struct {
 	skillA, skillB, description string
 } {
 	var escalate, wait []string
@@ -437,7 +437,7 @@ func (bt *BrainTrust) detectConflicts(analyses []subResult) []struct {
 // synthesize merges sub-agent analyses via one LLM call, streaming deltas. The
 // second return distinguishes failure-before-output (safe to fall back) from
 // mid-stream failure.
-func (bt *BrainTrust) synthesize(ctx context.Context, query string, results []subResult, conflicts []struct {
+func (bt *ThinkTank) synthesize(ctx context.Context, query string, results []subResult, conflicts []struct {
 	skillA, skillB, description string
 }, ch chan<- AnalysisEvent) (string, bool, error) {
 	var b strings.Builder

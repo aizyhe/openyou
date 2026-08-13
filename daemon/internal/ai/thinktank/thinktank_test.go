@@ -199,7 +199,7 @@ func TestAnalyze_SingleSkill(t *testing.T) {
 	}
 }
 
-func TestAnalyze_BrainTrustMode(t *testing.T) {
+func TestAnalyze_ThinkTankMode(t *testing.T) {
 	bt := New(
 		&mockLLM{
 			responses: map[string]string{
@@ -223,7 +223,7 @@ func TestAnalyze_BrainTrustMode(t *testing.T) {
 	var gotStart, gotProgress, gotResult, gotSynth, gotDone bool
 	for ev := range ch {
 		switch ev.Type {
-		case EventBrainTrustStart:
+		case EventThinkTankStart:
 			gotStart = true
 			if len(ev.Skills) != 2 {
 				t.Errorf("expected 2 skills, got %d", len(ev.Skills))
@@ -239,7 +239,7 @@ func TestAnalyze_BrainTrustMode(t *testing.T) {
 		}
 	}
 	if !gotStart {
-		t.Error("expected brain-trust-start event")
+		t.Error("expected thinktank-start event")
 	}
 	if !gotProgress {
 		t.Error("expected skill-progress events")
@@ -341,7 +341,7 @@ func TestAnalyze_SubAgentTimeout(t *testing.T) {
 }
 
 func TestDetectConflicts(t *testing.T) {
-	bt := &BrainTrust{}
+	bt := &ThinkTank{}
 	analyses := []subResult{
 		{skill: "power", result: "You should escalate this to management."},
 		{skill: "comm", result: "Wait and observe before acting."},
@@ -353,7 +353,7 @@ func TestDetectConflicts(t *testing.T) {
 }
 
 func TestDetectConflicts_NoConflict(t *testing.T) {
-	bt := &BrainTrust{}
+	bt := &ThinkTank{}
 	analyses := []subResult{
 		{skill: "power", result: "Build alliances first."},
 		{skill: "comm", result: "Use diplomatic language."},

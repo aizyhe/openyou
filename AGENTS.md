@@ -37,7 +37,7 @@ openyou/
 │   └── internal/
 │       ├── ai/agent/          # skill types (SkillInfo/SkillDef) + SkillMatcher interface (leaf package)
 │       ├── ai/llm/            # OpenAI-compatible client: Chat + SSE Stream + MaskingClient
-│       ├── ai/thinktank/      # brain trust: parallel sub-agent orchestration + synthesis
+│       ├── ai/thinktank/      # thinktank: parallel sub-agent orchestration + synthesis
 │       ├── infra/bridge/      # WebSocket hub (Broadcast to UI clients)
 │       ├── infra/config/      # SQLite key-value store (api_key/model/base_url)
 │       ├── infra/crypto/      # AES-256-GCM field-level encryption

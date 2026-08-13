@@ -35,7 +35,7 @@ See [VISION.md](docs/VISION.md) for the full philosophy.
 
 ## Features
 
-- **Brain Trust**: multiple skills analyze a question in parallel — cross-checked, conflicts detected, results synthesized.
+- **ThinkTank**: multiple skills analyze a question in parallel — cross-checked, conflicts detected, results synthesized.
 - **On-demand retrieval**: rules are always loaded; data (resume/question bank/people) is injected by `##` section chunks — a 300k-character question bank only brings the relevant questions; a matched skill is injected in full.
 - **Memory system**: auto-extracts key facts after each conversation, per-type confidence thresholds, async background processing, periodic decay.
 - **Incremental refresh**: manual edits use single-file O(1) refresh; direct file edits are detected by mtime fingerprint — no restart needed.
@@ -63,7 +63,7 @@ See [VISION.md](docs/VISION.md) for the full philosophy.
 ┌────────────▼──────────────────────────────────────────────┘
 ┌─ Go daemon (:8765)────────────────────────────────────────┐
 │  Workers: Star 6h · health 24h · memory decay 24h         │
-│  Brain Trust: ≤5 sub-agents → conflicts → synthesis       │
+│  ThinkTank: ≤5 sub-agents → conflicts → synthesis       │
 │  MaskingClient (pseudonymize) → DeepSeek SSE              │
 │  Storage: SQLite (api_key AES-256-GCM encrypted)          │
 └────────────┬──────────────────────────────────────────────┘
@@ -92,7 +92,7 @@ openyou/
 ├── android/              # Kotlin Android shell (WebView, foreground service, app lock)
 ├── daemon/               # Go daemon → .so via cgo + JNI
 │   └── internal/
-│       ├── ai/           # agent skill types · llm client · thinktank (brain trust)
+│       ├── ai/           # agent skill types · llm client · thinktank (thinktank)
 │       ├── infra/        # db/config/crypto/privacy/notify/bridge/tool
 │       ├── server/       # HTTP routes & handlers (REST/SSE/WS, Web UI included)
 │       ├── service/      # background workers · matcher (retrieval) · importer

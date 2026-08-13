@@ -91,7 +91,7 @@ openyou采用 Go daemon + Kotlin 壳的混合架构。Go daemon 编译为 .so �
 │  ┌─ Background Workers (ticker-based)─────────────────────┐  │
 │  │Star check (6h) · Context health (24h) · Memory decay   │  │
 │  └────────────────────────────────────────────────────────┘  │
-│  ┌─ Brain Trust (ai/thinktank, ≤5 parallel sub-agents)────┐  │
+│  ┌─ ThinkTank (ai/thinktank, ≤5 parallel sub-agents)────┐  │
 │  │query → Match skills → parallel sub-agents → conflicts │  │
 │  │            → synthesize                                │  │
 │  └────────────────────────────────────────────────────────┘  │
@@ -115,7 +115,7 @@ System.loadLibrary("agent")
       → 2. matcher seeds userdata .md into runtime dir
       → 3. import seed data on first launch (importer)
       → 4. build Pseudonymizer + MaskingClient (controlled by privacy_mode)
-      → 5. start memory extraction queue + brain trust + background workers
+      → 5. start memory extraction queue + thinktank + background workers
       → 6. start HTTP server (:8765)
 ```
 
@@ -474,16 +474,16 @@ AI 知道你"手上还有什么事",建议会围绕你的真实待办展开,而�
 **他不是一个人在想。他是多个专家在同时推演。** 每个技能 = 智囊团的一个成员。
 
 ```go
-type BrainTrust struct {
+type ThinkTank struct {
     llm     LLMClient       // Chat + StreamChat (SSE)
     skills  SkillProvider   // Match(query) []SkillInfo
     memory  MemoryProvider  // Relevant(query, limit) — optional, recall relevant memories
     docs    DocProvider     // ReadDir/ReadDoc/ListDocs/RelevantDocs — on-demand retrieval doc source
 }
 
-func New(llm LLMClient, skills SkillProvider, mem MemoryProvider, docs DocProvider) *BrainTrust
+func New(llm LLMClient, skills SkillProvider, mem MemoryProvider, docs DocProvider) *ThinkTank
 
-func (bt *BrainTrust) Analyze(ctx context.Context, query string, _ string) (<-chan AnalysisEvent, error)
+func (bt *ThinkTank) Analyze(ctx context.Context, query string, _ string) (<-chan AnalysisEvent, error)
 ```
 
 1. **自动匹配技能**：关键词/内容触发 → 激活相关技能
@@ -667,7 +667,7 @@ api_key 的读写安全：`GET /api/config` 只返回掩码（末 4 位）；`PU
 
 ```bash
 POST /api/analyze → SSE:
-    {"type":"brain-trust-start","skills":[{"name":"...","description":"..."}]}
+    {"type":"thinktank-start","skills":[{"name":"...","description":"..."}]}
     {"type":"skill-progress","skill":"...","status":"analyzing|complete|failed"}
     {"type":"skill-result","skill":"...","result":"..."}
     {"type":"conflict","skill_a":"...","skill_b":"...","description":"..."}

@@ -10,7 +10,7 @@ import (
 func TestBuildSkillPrompt_InsideFallback(t *testing.T) {
 	// Empty doc source → both RelevantDocs and ReadDir return empty
 	docs := &mockDocs{files: map[string]string{}}
-	bt := &BrainTrust{
+	bt := &ThinkTank{
 		llm:    &mockLLM{},
 		skills: &mockSkills{},
 		memory: &mockMemory{},
@@ -28,10 +28,10 @@ func TestBuildSkillPrompt_InsideFallback(t *testing.T) {
 // again (dedup), avoiding duplication.
 func TestBuildSkillPrompt_InsideNoDuplicate(t *testing.T) {
 	docs := &mockDocs{files: map[string]string{
-		"rule/openyou.md":     "# 铁律",
+		"rule/openyou.md":    "# 铁律",
 		"inside/people/x.md": "# 张建国档案\n\n- 关键内容 KEYBODY",
 	}}
-	bt := &BrainTrust{
+	bt := &ThinkTank{
 		llm:    &mockLLM{},
 		skills: &mockSkills{},
 		memory: &mockMemory{},

@@ -1,0 +1,2 @@
+This placeholder keeps //go:embed userdata compilable on fresh clones.
+Build scripts replace this directory with real context data.

@@ -25,7 +25,7 @@ import (
 )
 
 // ---------------------------------------------------------------------------
-// Fakes for brain-trust wiring
+// Fakes for thinktank wiring
 // ---------------------------------------------------------------------------
 
 // btSkillProvider is a thinktank.SkillProvider whose Match result is fixed.
@@ -55,7 +55,7 @@ func (e *errStreamer) Stream(_ context.Context, _ []llm.Message, onDelta func(st
 // Router builders
 // ---------------------------------------------------------------------------
 
-// analyzeDeps wires a full router INCLUDING brain trust + skill matcher + a
+// analyzeDeps wires a full router INCLUDING thinktank + skill matcher + a
 // writable skills matcher + pseudonymizer + memory queue.
 func analyzeDeps(t *testing.T, llmc server.ChatStreamer, btLLM thinktank.LLMClient, matched []thinktank.SkillInfo) (http.Handler, server.Deps) {
 	t.Helper()
@@ -91,7 +91,7 @@ func analyzeDeps(t *testing.T, llmc server.ChatStreamer, btLLM thinktank.LLMClie
 		MemoryExtractor: &memory.MockExtractor{},
 		SkillMatcher:    sk,
 		Skills:          sk,
-		BrainTrust:      thinktank.New(btLLM, &btSkillProvider{skills: matched}, nil, nil),
+		ThinkTank:       thinktank.New(btLLM, &btSkillProvider{skills: matched}, nil, nil),
 		Feedback:        fb,
 		Pseudonymizer:   privacy.New([]string{"张三"}),
 		Notify:          notify.NewQueue(16),
@@ -668,7 +668,7 @@ func TestChatWithFollowUpReminder(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// Analyze (brain trust) — 0 / 1 / 2-skill + conflict + validation
+// Analyze (thinktank) — 0 / 1 / 2-skill + conflict + validation
 // ---------------------------------------------------------------------------
 
 func TestAnalyzeValidation(t *testing.T) {
@@ -679,7 +679,7 @@ func TestAnalyzeValidation(t *testing.T) {
 	if w := doRequest(t, h, http.MethodPost, "/api/analyze", []byte(`{"message":""}`)); w.Code != http.StatusBadRequest {
 		t.Errorf("analyze empty want 400, got %d", w.Code)
 	}
-	// BrainTrust nil → 503.
+	// ThinkTank nil → 503.
 	hn := server.NewRouter(server.Deps{Hub: bridge.NewHub(), Tools: tool.NewRegistry()})
 	if w := doRequest(t, hn, http.MethodPost, "/api/analyze", []byte(`{"message":"hi"}`)); w.Code != http.StatusServiceUnavailable {
 		t.Errorf("analyze nil bt want 503, got %d", w.Code)
@@ -707,7 +707,7 @@ func TestAnalyzeSingleSkill(t *testing.T) {
 	}
 }
 
-func TestAnalyzeBrainTrustConflict(t *testing.T) {
+func TestAnalyzeThinkTankConflict(t *testing.T) {
 	// Two skills producing escalate/wait → conflict → synthesis resolves it.
 	btLLM := &fakeLLM{replyFor: func(joined string) string {
 		switch {
@@ -740,7 +740,7 @@ func TestAnalyzeContextualQueryWithHistory(t *testing.T) {
 }
 
 func TestAnalyzeError(t *testing.T) {
-	// Brain trust with a skill provider matching 0 skills but LLM erroring →
+	// ThinkTank with a skill provider matching 0 skills but LLM erroring →
 	// EventError streamed (not an HTTP error since SSE already started).
 	h, _ := analyzeDeps(t, &fakeLLM{replyFor: func(string) string { return "" }}, &errStreamerChat{}, nil)
 	text, _, _ := sse(t, h, "/api/analyze", `{"message":"x","session_id":"s_e"}`)

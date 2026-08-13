@@ -5,14 +5,14 @@ import "context"
 type AnalysisEventType string
 
 const (
-	EventBrainTrustStart AnalysisEventType = "brain-trust-start"
-	EventSkillProgress   AnalysisEventType = "skill-progress"
-	EventSkillResult     AnalysisEventType = "skill-result"
-	EventSynthesisDelta  AnalysisEventType = "synthesis-delta"
-	EventConflict        AnalysisEventType = "conflict"
-	EventCitation        AnalysisEventType = "source-citation"
-	EventDone            AnalysisEventType = "done"
-	EventError           AnalysisEventType = "error"
+	EventThinkTankStart AnalysisEventType = "thinktank-start"
+	EventSkillProgress  AnalysisEventType = "skill-progress"
+	EventSkillResult    AnalysisEventType = "skill-result"
+	EventSynthesisDelta AnalysisEventType = "synthesis-delta"
+	EventConflict       AnalysisEventType = "conflict"
+	EventCitation       AnalysisEventType = "source-citation"
+	EventDone           AnalysisEventType = "done"
+	EventError          AnalysisEventType = "error"
 )
 
 type AnalysisEvent struct {
