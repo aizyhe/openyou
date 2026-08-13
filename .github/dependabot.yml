@@ -1,4 +1,6 @@
 # Dependabot keeps dependencies up to date.
+# Major-version bumps are ignored: they usually break the build (gradle/kotlin/
+# plugin upgrades are coupled), so they are handled manually when needed.
 # See https://docs.github.com/code-security/dependabot
 
 version: 2
@@ -8,15 +10,27 @@ updates:
     directory: "/daemon"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
-  # Gradle (Android)
+  # Gradle (Android) — build plugin versions are coupled; only patch/minor
   - package-ecosystem: "gradle"
     directory: "/android"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
