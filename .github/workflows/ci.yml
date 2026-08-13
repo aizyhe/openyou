@@ -33,7 +33,7 @@ jobs:
         run: cd daemon && go test ./... -count=1 -coverprofile=coverage.out
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v7
         with:
           files: daemon/coverage.out
           fail_ci_if_error: false
