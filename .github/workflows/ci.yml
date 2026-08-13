@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  go:
+    name: Go (build · vet · gofmt · test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: gofmt check
+        run: |
+          cd daemon
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "::error::gofmt needed on:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: go vet
+        run: cd daemon && go vet ./...
+
+      - name: go test (with coverage)
+        run: cd daemon && go test ./... -count=1 -coverprofile=coverage.out
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: daemon/coverage.out
+          fail_ci_if_error: false
+
+  web:
+    name: Web (sources → artifact sync)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build web and verify artifacts are in sync
+        run: |
+          python3 web/build.py
+          git diff --exit-code -- \
+            daemon/internal/server/web/index.html \
+            android/app/src/main/res/drawable/ic_launcher_foreground.xml
+          echo "Web sources and build artifacts are in sync."
+
+  e2e:
+    name: E2E (fake LLM)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: Run end-to-end tests
+        run: bash scripts/test_e2e.sh

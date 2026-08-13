@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Y logo — THE single source of truth. One design, every surface,
+       every size — like a flag: colors and proportions never change.
+       Plate uses the app's brand accent (CSS --accent #7C4DFF, the same
+       purple as send buttons / active tabs / links) with a white Y —
+       one visual language across logo and UI.
+       Symmetric square 8..120, radius 24; adaptive-safe Y: arms x=50/78,
+       y=43..68, stem x=64, y=68..85, weight 6.
+       Edit ONLY this file; web/build.py regenerates every consumer:
+         * Web UI  : <symbol id="logo-y"> referenced via <use>
+         * Android : ic_launcher_foreground.xml + ic_notification.xml
+       Supported subset: <path> elements. -->
+  <path d="M32,8 L96,8 Q120,8 120,32 L120,96 Q120,120 96,120 L32,120 Q8,120 8,96 L8,32 Q8,8 32,8 Z" fill="#7C4DFF"/>
+  <path d="M50,43 L64,68 M64,68 L78,43 M64,68 L64,85" fill="none" stroke="#FFFFFF" stroke-width="6.6" stroke-linecap="round"/>
+</svg>

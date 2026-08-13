@@ -1,0 +1,38 @@
+// openyou.json / openyou.jsonc — LLM config reference file (like opencode.json)
+//
+// Usage:
+//   1. Copy this file to userdata/openyou.json (or userdata/openyou.jsonc)
+//   2. Fill in your provider's api_key / base_url / model below
+//   3. Restart the daemon, or set the key in App → Settings → AI Engine
+//      (the Settings page takes priority over this file)
+//
+// Precedence: App Settings page > this file > built-in defaults.
+//   This file only applies when the corresponding config key is empty;
+//   values already set in the Settings page are never overwritten.
+//
+// Security:
+//   - api_key is stored AES-256-GCM field-encrypted in the config store
+//   - GET /api/config only returns a masked value (last 4 chars)
+//   - userdata/ is in .gitignore; this reference file and your real keys
+//     never enter git
+{
+  // ── DeepSeek (default, matches the app's built-in) ─────────────
+  "api_key": "sk-your-deepseek-key",
+  "base_url": "https://api.deepseek.com/v1",
+  "model": "deepseek-v4-pro",
+
+  // ── or: OpenAI ─────────────────────────────────────────────────
+  // "api_key": "sk-your-openai-key",
+  // "base_url": "https://api.openai.com/v1",
+  // "model": "gpt-4o",
+
+  // ── or: Anthropic Claude ───────────────────────────────────────
+  // "api_key": "sk-ant-your-claude-key",
+  // "base_url": "https://api.anthropic.com/v1",
+  // "model": "claude-sonnet-4-5",
+
+  // ── Optional ───────────────────────────────────────────────────
+  "max_tokens": 4096,
+  "temperature": 0.7,
+  // "privacy_mode": "balanced"   // balanced=mask names | trust=no masking
+}

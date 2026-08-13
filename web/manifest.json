@@ -1,0 +1,22 @@
+{
+  "output": "daemon/internal/server/web/index.html",
+  "parts": [
+    {"type": "html", "file": "web/html/head.html"},
+    {"type": "css",  "file": "web/css/style.css"},
+    {"type": "html", "file": "web/html/body.html"},
+    {"type": "svg",  "file": "web/logo.svg", "id": "logo-y"},
+    {"type": "js",   "files": [
+      "web/js/core/state.js",
+      "web/js/core/ws.js",
+      "web/js/core/router.js",
+      "web/js/core/modals.js",
+      "web/js/pages/consult.js",
+      "web/js/pages/settings.js",
+      "web/js/pages/context.js",
+      "web/js/pages/home.js",
+      "web/js/pages/time.js",
+      "web/js/core/init.js"
+    ]},
+    {"type": "html", "file": "web/html/footer.html"}
+  ]
+}

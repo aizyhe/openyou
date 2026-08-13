@@ -1,0 +1,59 @@
+# ===== 构建产物 =====
+
+# APK
+*.apk
+
+# Go daemon build artifacts
+daemon/libagent*.so
+daemon/libagent*.h
+daemon/daemon
+daemon/answer*
+
+# Android build
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/app/src/main/jniLibs/
+android/app/src/main/assets/www/
+
+# 日志
+*.log
+daemon/*.log
+
+# ===== 私有数据（永不发布） =====
+# 用户的私有 Context（简历/人物/规则/技能/记忆）。开源仓库只含
+# userdata.example/ 空骨架；构建脚本缺省时自动回落。
+userdata/
+daemon/internal/service/importer/userdata
+
+# 备份归档（make userdata 产物）
+openyou-backup-*.zip
+
+# ===== 密钥与环境变量 =====
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+!android/app/src/main/keystore.example
+
+# ===== IDE / 工具 =====
+.idea/
+.vscode/
+.codegraph
+.omo/
+.omo
+.claude
+.playwright-mcp/
+*.swp
+*.swo
+*~
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+

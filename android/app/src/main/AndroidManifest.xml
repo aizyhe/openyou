@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Network access for WebView remote content loading -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Foreground service for persistent WebView runtime -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
+    <!-- Battery optimization exemption for long-running service -->
+    <!-- REQUEST_IGNORE_BATTERY_OPTIMIZATIONS removed: permission is non-standard
+         and triggers Play Store review. Request battery exemption at runtime
+         via ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS if needed. -->
+
+    <!-- Notifications for foreground service (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Biometric authentication for app unlock -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+
+    <!-- Auto-start the daemon service after device reboot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:label="openyou"
+        android:icon="@mipmap/ic_launcher"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar"
+        android:hardwareAccelerated="true"
+        android:allowBackup="false"
+        android:networkSecurityConfig="@xml/network_security_config">
+
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode|density|fontScale|locale|colorMode"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- App Lock gate. Not exported; launched only
+             by MainActivity. excludeFromRecents keeps the lock out of the recents
+             thumbnail (FLAG_SECURE is also set in code). configChanges prevents
+             Activity recreation on rotation, preserving the firstEntry state. -->
+        <activity
+            android:name=".LockActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize|screenLayout|uiMode|density|keyboardHidden"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
+
+        <!-- Foreground service that owns the Go daemon lifecycle -->
+        <service
+            android:name=".DaemonForegroundService"
+            android:foregroundServiceType="specialUse"
+            android:exported="false">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Persistent on-device openyou daemon" />
+        </service>
+
+        <!-- Restart the service after reboot -->
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>
